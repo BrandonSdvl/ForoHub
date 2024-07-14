@@ -1,9 +1,7 @@
 package com.alura.ForoHub.controller;
 
-import com.alura.ForoHub.domain.topico.DatosListadoTopico;
-import com.alura.ForoHub.domain.topico.DatosRegistroTopico;
-import com.alura.ForoHub.domain.topico.Topico;
-import com.alura.ForoHub.domain.topico.TopicoRepository;
+import com.alura.ForoHub.domain.topico.*;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,5 +28,12 @@ public class TopicoContorller {
     public DatosListadoTopico buscarTopico(@PathVariable Long id) {
         Topico topico = topicoRepository.getReferenceById(id);
         return new DatosListadoTopico(topico);
+    }
+
+    @PutMapping("/{id}")
+    @Transactional
+    public void actualizarTopico(@PathVariable Long id, @RequestBody @Valid DatosActualizarTopico datosActualizarTopico) {
+        Topico topico = topicoRepository.getReferenceById(id);
+        topico.actualizarDatos(datosActualizarTopico);
     }
 }
