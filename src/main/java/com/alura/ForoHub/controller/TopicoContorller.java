@@ -36,4 +36,11 @@ public class TopicoContorller {
         Topico topico = topicoRepository.getReferenceById(id);
         topico.actualizarDatos(datosActualizarTopico);
     }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public void eliminarTopico(@PathVariable Long id) {
+        topicoRepository.findById(id).ifPresent(topico -> topicoRepository.delete(topico));
+    }
+
 }
