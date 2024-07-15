@@ -1,4 +1,4 @@
-package com.alura.ForoHub.infra;
+package com.alura.ForoHub.infra.errores;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
