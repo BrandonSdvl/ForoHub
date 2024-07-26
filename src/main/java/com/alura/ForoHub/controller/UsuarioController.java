@@ -7,10 +7,7 @@ import com.alura.ForoHub.domain.usuario.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -29,7 +26,13 @@ public class UsuarioController {
         Usuario usuario = usuarioRepository.save(new Usuario(datosAutenticacionUsuario.nombre(), passwordEncoder.encode(datosAutenticacionUsuario.clave())));
         DatosListadoUsuario datosListadoUsuario = new DatosListadoUsuario(usuario);
 
-        URI url = uriComponentsBuilder.path("usuarios/{id}").buildAndExpand(usuario.getId()).toUri();
+        URI url = uriComponentsBuilder.path("registrar/{id}").buildAndExpand(usuario.getId()).toUri();
         return ResponseEntity.created(url).body(datosListadoUsuario);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DatosListadoUsuario> mostrarUsuario(@PathVariable Long id) {
+        Usuario usuario = usuarioRepository.getReferenceById(id);
+        return ResponseEntity.ok(new DatosListadoUsuario(usuario));
     }
 }
