@@ -1,6 +1,10 @@
 package com.alura.ForoHub.controller;
 
 import com.alura.ForoHub.domain.topico.*;
+import com.alura.ForoHub.domain.usuario.Usuario;
+import com.alura.ForoHub.domain.usuario.UsuarioRepository;
+import com.alura.ForoHub.infra.security.TokenService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -19,9 +23,17 @@ public class TopicoContorller {
     @Autowired
     private TopicoRepository topicoRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private TokenService tokenService;
+
     @PostMapping
-    public ResponseEntity<DatosListadoTopico> registrarTopico(@RequestBody @Valid DatosRegistroTopico datosRegistroTopico, UriComponentsBuilder uriComponentsBuilder) {
-        Topico topico = topicoRepository.save(new Topico(datosRegistroTopico));
+    public ResponseEntity<DatosListadoTopico> registrarTopico(HttpServletRequest request, @RequestBody @Valid DatosRegistroTopico datosRegistroTopico, UriComponentsBuilder uriComponentsBuilder) {
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        Usuario usuario = (Usuario) usuarioRepository.findByNombre(tokenService.getSubject(token));
+        Topico topico = topicoRepository.save(new Topico(datosRegistroTopico, usuario));
         DatosListadoTopico datosListadoTopico = new DatosListadoTopico(topico);
         URI url = uriComponentsBuilder.path("topicos/{id}").buildAndExpand(topico.getId()).toUri();
         return ResponseEntity.created(url).body(datosListadoTopico);
@@ -49,7 +61,7 @@ public class TopicoContorller {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity eliminarTopico(@PathVariable Long id) {
-        topicoRepository.findById(id).ifPresent(topico -> topicoRepository.delete(topico));
+        topicoRepository.deleteTopicoById(id);
         return ResponseEntity.noContent().build();
     }
 

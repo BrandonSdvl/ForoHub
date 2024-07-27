@@ -1,5 +1,6 @@
 package com.alura.ForoHub.domain.usuario;
 
+import com.alura.ForoHub.domain.topico.Topico;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -22,8 +23,11 @@ public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String nombre;
     private String clave;
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Topico> topicos;
 
     public Usuario(String nombre, String clave) {
         this.nombre = nombre;

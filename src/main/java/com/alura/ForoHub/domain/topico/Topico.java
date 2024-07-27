@@ -1,4 +1,5 @@
 package com.alura.ForoHub.domain.topico;
+import com.alura.ForoHub.domain.usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -6,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Table(name = "topicos")
 @Entity(name = "Topico")
@@ -18,20 +18,22 @@ public class Topico {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    String titulo;
-    String mensaje;
-    LocalDateTime fecha;
-    Boolean status;
-    String autor;
-    String curso;
+    private String titulo;
+    private String mensaje;
+    private LocalDateTime fecha;
+    private Boolean status;
+    private String curso;
+    @ManyToOne
+    @JoinColumn(name = "id_autor", nullable = false)
+    private Usuario autor;
 
-    public Topico(DatosRegistroTopico datosRegistroTopico) {
+    public Topico(DatosRegistroTopico datosRegistroTopico, Usuario autor) {
         this.titulo = datosRegistroTopico.titulo();
         this.mensaje = datosRegistroTopico.mensaje();
-        this.autor = datosRegistroTopico.autor();
+        this.autor = autor;
         this.curso = datosRegistroTopico.curso();
         this.fecha = LocalDateTime.now();
-        this.status = true;
+        this.status = false;
     }
 
     public void actualizarDatos(DatosActualizarTopico datosActualizarTopico) {
