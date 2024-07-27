@@ -3,8 +3,9 @@ spring:
     name=ForoHub:
   profile.active: dev, test, prod
   datasource:
-    url: jdbc:mysql://localhost/foro_hub
-    username: root
+    url: jdbc:mysql://${DB_HOST}/${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
 
 server:
   error:
