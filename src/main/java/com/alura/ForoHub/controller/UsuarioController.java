@@ -4,6 +4,7 @@ import com.alura.ForoHub.domain.usuario.DatosAutenticacionUsuario;
 import com.alura.ForoHub.domain.usuario.DatosListadoUsuario;
 import com.alura.ForoHub.domain.usuario.Usuario;
 import com.alura.ForoHub.domain.usuario.UsuarioRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,17 +23,15 @@ public class UsuarioController {
     PasswordEncoder passwordEncoder;
 
     @PostMapping
-    public ResponseEntity<DatosListadoUsuario> registrarUsuario(@RequestBody DatosAutenticacionUsuario datosAutenticacionUsuario, UriComponentsBuilder uriComponentsBuilder) {
+    public ResponseEntity<?> registrarUsuario(@RequestBody @Valid DatosAutenticacionUsuario datosAutenticacionUsuario, UriComponentsBuilder uriComponentsBuilder) {
+        if (usuarioRepository.findByNombre(datosAutenticacionUsuario.nombre()) != null) {
+            return ResponseEntity.badRequest().body("El nombre de usuario ya está registrado.");
+        }
+
         Usuario usuario = usuarioRepository.save(new Usuario(datosAutenticacionUsuario.nombre(), passwordEncoder.encode(datosAutenticacionUsuario.clave())));
         DatosListadoUsuario datosListadoUsuario = new DatosListadoUsuario(usuario);
 
-        URI url = uriComponentsBuilder.path("registrar/{id}").buildAndExpand(usuario.getId()).toUri();
+        URI url = uriComponentsBuilder.path("login").buildAndExpand(usuario.getId()).toUri();
         return ResponseEntity.created(url).body(datosListadoUsuario);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<DatosListadoUsuario> mostrarUsuario(@PathVariable Long id) {
-        Usuario usuario = usuarioRepository.getReferenceById(id);
-        return ResponseEntity.ok(new DatosListadoUsuario(usuario));
     }
 }

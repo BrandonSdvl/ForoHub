@@ -1,4 +1,10 @@
 package com.alura.ForoHub.domain.usuario;
 
-public record DatosAutenticacionUsuario(String nombre, String clave) {
+import jakarta.validation.constraints.NotBlank;
+
+public record DatosAutenticacionUsuario(
+        @NotBlank
+        String nombre,
+        @NotBlank
+        String clave) {
 }
